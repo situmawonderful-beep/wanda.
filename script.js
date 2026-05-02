@@ -1,13 +1,34 @@
 // ============================================
-//  LAVENDER GLOW BEAUTY SALOON — script.js
+//  LAVENDER GLOW BEAUTY SPACE — script.js
+//  Powered by Firebase Firestore + Auth
 // ============================================
+
+// ============================
+// FIREBASE CONFIG
+// ============================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBbbXQVgW5WQsbtnN2Smwt0qP4cd13VfRI",
+  authDomain: "blessin-deaa8.firebaseapp.com",
+  projectId: "blessin-deaa8",
+  storageBucket: "blessin-deaa8.firebasestorage.app",
+  messagingSenderId: "349721881752",
+  appId: "1:349721881752:web:0f880c563e2d54088d5ded",
+  measurementId: "G-RPMXJQ9L5K"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
 
 // ============================
 // CONSTANTS
 // ============================
 const ADMIN_EMAIL = 'situmawonderful@gmail.com';
-const ADMIN_PASS  = 'wanda.2006';
-const ADMIN_NAME  = 'wanda';
+const ADMIN_NAME  = 'Wanda';
 
 const SERVICES = [
   { name: 'Manicure',         icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/manicure_b_hrhetr.jpg',        desc: 'Classic, Gel & acrylic nail treatments',                        price: 1500 },
@@ -21,33 +42,29 @@ const SERVICES = [
 // STATE
 // ============================
 const state = {
-  users:    JSON.parse(localStorage.getItem('lg_users')    || '[]'),
-  bookings: JSON.parse(localStorage.getItem('lg_bookings') || '[]'),
-  current:  JSON.parse(localStorage.getItem('lg_current')  || 'null'),
-  selSvc:   null,
+  currentUser: null,
+  currentProfile: null,
+  bookings: [],
+  members: [],
+  selSvc: null,
+  isAdmin: false,
 };
 
 // ============================
 // HELPERS
 // ============================
-function save() {
-  localStorage.setItem('lg_users',    JSON.stringify(state.users));
-  localStorage.setItem('lg_bookings', JSON.stringify(state.bookings));
-  localStorage.setItem('lg_current',  JSON.stringify(state.current));
-}
-
-function isMember() {
-  return state.current && state.current.email !== ADMIN_EMAIL;
-}
-
-function isAdmin() {
-  return state.current && state.current.email === ADMIN_EMAIL;
-}
-
 function $(id) {
   const el = document.getElementById(id);
   if (!el) console.warn(`Element #${id} not found`);
   return el;
+}
+
+function isMember() {
+  return state.currentUser && !state.isAdmin;
+}
+
+function isAdmin() {
+  return state.isAdmin;
 }
 
 // ============================
@@ -56,6 +73,7 @@ function $(id) {
 let toastTimer;
 function toast(msg, type = '') {
   const el = $('toast');
+  if (!el) return;
   el.textContent = msg;
   el.className = 'toast ' + (type ? 't-' + type : '');
   clearTimeout(toastTimer);
@@ -66,8 +84,8 @@ function toast(msg, type = '') {
 // ============================
 // MODALS
 // ============================
-function openModal(id)  { $(id).classList.add('open'); }
-function closeModal(id) { $(id).classList.remove('open'); }
+function openModal(id)  { const el = $(id); if (el) el.classList.add('open'); }
+function closeModal(id) { const el = $(id); if (el) el.classList.remove('open'); }
 
 function openAuthModal(tab) {
   openModal('authOverlay');
@@ -88,65 +106,107 @@ function switchAuthTab(tab) {
 // ============================
 // AUTH — LOGIN
 // ============================
-function doLogin() {
+async function doLogin() {
   const email = $('liEmail').value.trim();
   const pass  = $('liPass').value;
 
   if (!email || !pass) { toast('Please fill in all fields', 'error'); return; }
 
-  // Admin login
-  if (email === ADMIN_EMAIL && pass === ADMIN_PASS) {
-    state.current = { name: ADMIN_NAME, email: ADMIN_EMAIL, isAdmin: true };
-    save();
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
     closeModal('authOverlay');
-    refreshUI();
-    toast('Welcome, Administrator! ⚙', 'success');
-    return;
+    toast('Welcome back! 🌿', 'success');
+  } catch (err) {
+    toast('Incorrect email or password', 'error');
   }
-
-  // Member login
-  const user = state.users.find(u => u.email === email && u.password === pass);
-  if (!user) { toast('Incorrect email or password', 'error'); return; }
-
-  state.current = user;
-  save();
-  closeModal('authOverlay');
-  refreshUI();
-  toast('Welcome back, ' + user.name.split(' ')[0] + '! ', 'success Nigga');
 }
 
 // ============================
 // AUTH — REGISTER
 // ============================
-function doRegister() {
+async function doRegister() {
   const name  = $('rgName').value.trim();
   const email = $('rgEmail').value.trim();
   const pass  = $('rgPass').value;
 
-  if (!name || !email || !pass)            { toast('Please fill all fields', 'error'); return; }
-  if (pass.length < 6)                     { toast('Password must be at least 6 characters', 'error'); return; }
-  if (email === ADMIN_EMAIL)               { toast('This email is reserved', 'error'); return; }
-  if (state.users.find(u => u.email === email)) { toast('Email already registered', 'error'); return; }
+  if (!name || !email || !pass) { toast('Please fill all fields', 'error'); return; }
+  if (pass.length < 6)          { toast('Password must be at least 6 characters', 'error'); return; }
 
-  const user = { name, email, password: pass, joined: new Date().toLocaleDateString('en-KE') };
-  state.users.push(user);
-  state.current = user;
-  save();
-  closeModal('authOverlay');
-  refreshUI();
-  toast('Account created! 5% discount is now active on your first service', 'success');
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await updateProfile(cred.user, { displayName: name });
+
+    // Save member profile to Firestore
+    await setDoc(doc(db, 'members', cred.user.uid), {
+      name,
+      email,
+      joined: new Date().toLocaleDateString('en-KE'),
+      uid: cred.user.uid,
+    });
+
+    closeModal('authOverlay');
+    toast('Account created! 5% discount is now active 🎉', 'success');
+  } catch (err) {
+    if (err.code === 'auth/email-already-in-use') {
+      toast('Email already registered', 'error');
+    } else {
+      toast('Registration failed: ' + err.message, 'error');
+    }
+  }
 }
 
 // ============================
 // AUTH — LOGOUT
 // ============================
-function doLogout() {
-  state.current = null;
-  save();
+async function doLogout() {
+  await signOut(auth);
   closeModal('accOverlay');
-  refreshUI();
-  toast('Signed out. See you soon bitch! ');
+  toast('Signed out. See you soon! 🌿');
 }
+
+// ============================
+// FIREBASE — LOAD DATA
+// ============================
+async function loadBookings() {
+  const q = query(collection(db, 'bookings'), orderBy('created', 'desc'));
+  onSnapshot(q, (snapshot) => {
+    state.bookings = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (isAdmin()) renderAdmin();
+    if (state.currentUser && !isAdmin()) renderMyBookings();
+  });
+}
+
+async function loadMembers() {
+  const q = query(collection(db, 'members'), orderBy('joined', 'asc'));
+  onSnapshot(q, (snapshot) => {
+    state.members = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (isAdmin()) renderMembersTable();
+  });
+}
+
+// ============================
+// AUTH STATE LISTENER
+// ============================
+onAuthStateChanged(auth, async (user) => {
+  state.currentUser = user;
+  state.isAdmin = user ? user.email === ADMIN_EMAIL : false;
+
+  if (user) {
+    // Load profile from Firestore
+    if (!isAdmin()) {
+      const profileDoc = await getDoc(doc(db, 'members', user.uid));
+      state.currentProfile = profileDoc.exists() ? profileDoc.data() : { name: user.displayName, email: user.email };
+    }
+    loadBookings();
+    loadMembers();
+  } else {
+    state.currentProfile = null;
+    state.bookings = [];
+    state.members  = [];
+  }
+
+  refreshUI();
+});
 
 // ============================
 // REFRESH ALL UI
@@ -165,7 +225,8 @@ function refreshUI() {
     adminSec.style.display = 'none';
   }
 
-  $('memberWelcome').style.display = isMember() ? 'flex' : 'none';
+  const welcome = $('memberWelcome');
+  if (welcome) welcome.style.display = isMember() ? 'flex' : 'none';
 }
 
 // ============================
@@ -173,14 +234,14 @@ function refreshUI() {
 // ============================
 function updateNav() {
   const btn = $('navAuthBtn');
+  if (!btn) return;
 
   if (isAdmin()) {
     btn.textContent = '⚙ Admin';
-    btn.onclick = () => {
-      $('adminSection').scrollIntoView({ behavior: 'smooth' });
-    };
-  } else if (isMember()) {
-    btn.textContent = '👤 ' + state.current.name.split(' ')[0];
+    btn.onclick = () => $('adminSection').scrollIntoView({ behavior: 'smooth' });
+  } else if (state.currentUser) {
+    const name = state.currentProfile?.name || state.currentUser.displayName || 'Member';
+    btn.textContent = '👤 ' + name.split(' ')[0];
     btn.onclick = openAccountModal;
   } else {
     btn.textContent = 'Sign In';
@@ -195,7 +256,7 @@ function updateBookingNotices() {
   const memberNotice = $('bookMemberNotice');
   const guestNotice  = $('bookGuestNotice');
   if (memberNotice) memberNotice.style.display = isMember() ? 'flex' : 'none';
-  if (guestNotice)  guestNotice.style.display  = !state.current ? 'flex' : 'none';
+  if (guestNotice)  guestNotice.style.display  = !state.currentUser ? 'flex' : 'none';
 }
 
 // ============================
@@ -203,8 +264,10 @@ function updateBookingNotices() {
 // ============================
 function renderServices() {
   const grid = $('servicesGrid');
+  if (!grid) return;
 
-  $('svcSubtitle').textContent = isMember()
+  const subtitle = $('svcSubtitle');
+  if (subtitle) subtitle.textContent = isMember()
     ? 'Member pricing active — 5% off all services!'
     : 'Register free to unlock member pricing';
 
@@ -232,8 +295,8 @@ function renderServices() {
       </div>`;
   }).join('');
 
-  // Sync booking dropdown
   const sel = $('bkService');
+  if (!sel) return;
   const cur = sel.value;
   sel.innerHTML = '<option value="">-- Select a service --</option>';
   SERVICES.forEach(s => {
@@ -248,19 +311,24 @@ function renderServices() {
 
 function selectService(i) {
   state.selSvc = i;
-  $('bkService').value = SERVICES[i].name;
+  const sel = $('bkService');
+  if (sel) sel.value = SERVICES[i].name;
   renderServices();
   updatePriceSummary();
-  $('book').scrollIntoView({ behavior: 'smooth' });
+  const book = document.getElementById('book');
+  if (book) book.scrollIntoView({ behavior: 'smooth' });
 }
 
 // ============================
 // PRICE SUMMARY
 // ============================
 function updatePriceSummary() {
-  const svcName = $('bkService').value;
+  const svcSel = $('bkService');
+  if (!svcSel) return;
+  const svcName = svcSel.value;
   const svc     = SERVICES.find(s => s.name === svcName);
   const ps      = $('priceSummary');
+  if (!ps) return;
 
   if (!svc) { ps.style.display = 'none'; return; }
 
@@ -274,15 +342,14 @@ function updatePriceSummary() {
   $('psTotal').textContent   = 'KSh ' + total.toLocaleString();
   $('psDiscRow').style.display = isMember() ? 'flex' : 'none';
 
-  // Keep selected card in sync
   const idx = SERVICES.findIndex(s => s.name === svcName);
   if (idx !== state.selSvc) { state.selSvc = idx; renderServices(); }
 }
 
 // ============================
-// BOOKING
+// BOOKING — SUBMIT TO FIREBASE
 // ============================
-function submitBooking() {
+async function submitBooking() {
   const name    = $('bkName').value.trim();
   const phone   = $('bkPhone').value.trim();
   const svcName = $('bkService').value;
@@ -300,26 +367,29 @@ function submitBooking() {
   const member = isMember();
   const price  = member ? Math.round(svc.price * 0.95) : svc.price;
 
-  const booking = {
-    id:      Date.now(),
-    name, phone, service: svcName,
-    date, time, notes, price, member,
-    email:   state.current ? state.current.email : null,
-    created: new Date().toISOString(),
-  };
+  try {
+    await addDoc(collection(db, 'bookings'), {
+      name, phone,
+      service: svcName,
+      date, time, notes, price, member,
+      email:   state.currentUser ? state.currentUser.email : null,
+      uid:     state.currentUser ? state.currentUser.uid   : null,
+      created: new Date().toISOString(),
+    });
 
-  state.bookings.push(booking);
-  save();
-  clearBookingForm();
-  toast('Appointment booked! See you at Lavender Glow ', 'success');
-  if (isAdmin()) renderAdmin();
+    clearBookingForm();
+    toast('Appointment booked! See you at Lavender Glow 💜', 'success');
+  } catch (err) {
+    toast('Booking failed. Please try again.', 'error');
+    console.error(err);
+  }
 }
 
 function clearBookingForm() {
-  ['bkName', 'bkPhone', 'bkDate', 'bkNotes'].forEach(id => $(id).value = '');
-  $('bkService').value = '';
-  $('bkTime').value    = '';
-  $('priceSummary').style.display = 'none';
+  ['bkName', 'bkPhone', 'bkDate', 'bkNotes'].forEach(id => { const el = $(id); if (el) el.value = ''; });
+  const svc = $('bkService'); if (svc) svc.value = '';
+  const tim = $('bkTime');    if (tim) tim.value = '';
+  const ps  = $('priceSummary'); if (ps) ps.style.display = 'none';
   state.selSvc = null;
   renderServices();
 }
@@ -328,20 +398,28 @@ function clearBookingForm() {
 // ACCOUNT MODAL
 // ============================
 function openAccountModal() {
-  if (!state.current) return;
-  const u = state.current;
-  const initials = u.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  if (!state.currentUser) return;
+  const profile = state.currentProfile;
+  const name    = profile?.name || state.currentUser.displayName || 'Member';
+  const email   = state.currentUser.email;
+  const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
 
   $('accAvatar').textContent = initials;
-  $('accName').textContent   = u.name;
-  $('accEmail').textContent  = u.email;
+  $('accName').textContent   = name;
+  $('accEmail').textContent  = email;
 
-  const myB  = state.bookings.filter(b => b.email === u.email);
+  renderMyBookings();
+  openModal('accOverlay');
+}
+
+function renderMyBookings() {
   const list = $('myBookingsList');
+  if (!list || !state.currentUser) return;
+  const myB = state.bookings.filter(b => b.uid === state.currentUser.uid || b.email === state.currentUser.email);
 
   if (myB.length) {
     list.className = '';
-    list.innerHTML = myB.slice().reverse().map(b => `
+    list.innerHTML = myB.map(b => `
       <div style="padding:0.5rem 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
         <span>
           <strong>${b.service}</strong><br>
@@ -354,47 +432,41 @@ function openAccountModal() {
     list.className = 'my-bookings-empty';
     list.innerHTML = 'No bookings yet. Book your first appointment!';
   }
-
-  openModal('accOverlay');
 }
 
 // ============================
 // ADMIN DASHBOARD
 // ============================
 function renderAdmin() {
-  const today    = new Date().toISOString().split('T')[0];
-  const todayBks = state.bookings.filter(b => b.date === today);
-  const revenue  = state.bookings.reduce((a, b) => a + b.price, 0);
+  const today     = new Date().toISOString().split('T')[0];
+  const todayBks  = state.bookings.filter(b => b.date === today);
+  const revenue   = state.bookings.reduce((a, b) => a + b.price, 0);
   const memberBks = state.bookings.filter(b => b.member);
   const guestBks  = state.bookings.filter(b => !b.member);
   const memberRev = memberBks.reduce((a, b) => a + b.price, 0);
 
-  // Set today's date in header
   const dateEl = $('adminDate');
   if (dateEl) dateEl.textContent = new Date().toLocaleDateString('en-KE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-  $('stTotal').textContent    = state.bookings.length;
-  $('stMembers').textContent  = state.users.length;
-  $('stToday').textContent    = todayBks.length;
-  $('stRevenue').textContent  = 'KSh ' + revenue.toLocaleString();
-  $('stGuests').textContent   = guestBks.length;
+  $('stTotal').textContent     = state.bookings.length;
+  $('stMembers').textContent   = state.members.length;
+  $('stToday').textContent     = todayBks.length;
+  $('stRevenue').textContent   = 'KSh ' + revenue.toLocaleString();
+  $('stGuests').textContent    = guestBks.length;
   $('stMemberRev').textContent = 'KSh ' + memberRev.toLocaleString();
 
-  // Most popular service
   const svcCount = {};
   state.bookings.forEach(b => { svcCount[b.service] = (svcCount[b.service] || 0) + 1; });
-  const popular = Object.entries(svcCount).sort((a,b) => b[1]-a[1])[0];
+  const popular = Object.entries(svcCount).sort((a, b) => b[1] - a[1])[0];
   $('stPopular').textContent = popular ? `${popular[0]} (${popular[1]}x)` : '—';
 
-  // Next upcoming appointment
   const upcoming = state.bookings
     .filter(b => b.date >= today)
-    .sort((a,b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time))[0];
+    .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time))[0];
   $('stNext').textContent = upcoming
     ? `${upcoming.name} · ${upcoming.service} · ${upcoming.date} ${upcoming.time}`
     : 'No upcoming bookings';
 
-  // Populate service filter dropdown
   const filterSvc = $('adminFilterSvc');
   if (filterSvc) {
     filterSvc.innerHTML = '<option value="">All Services</option>';
@@ -410,14 +482,14 @@ function renderAdmin() {
 }
 
 function getFilteredBookings() {
-  const search = ($('adminSearch') ? $('adminSearch').value.toLowerCase() : '');
-  const svc    = $('adminFilterSvc') ? $('adminFilterSvc').value : '';
+  const search = $('adminSearch')  ? $('adminSearch').value.toLowerCase()  : '';
+  const svc    = $('adminFilterSvc')  ? $('adminFilterSvc').value  : '';
   const type   = $('adminFilterType') ? $('adminFilterType').value : '';
 
-  return state.bookings.slice().reverse().filter(b => {
+  return state.bookings.filter(b => {
     const matchSearch = !search ||
       b.name.toLowerCase().includes(search) ||
-      b.phone.includes(search) ||
+      (b.phone || '').includes(search) ||
       b.service.toLowerCase().includes(search);
     const matchSvc  = !svc  || b.service === svc;
     const matchType = !type || (type === 'member' ? b.member : !b.member);
@@ -427,30 +499,30 @@ function getFilteredBookings() {
 
 function renderBookingsTable() {
   const bTbody  = $('adminBookings');
+  if (!bTbody) return;
   const filtered = getFilteredBookings();
 
   bTbody.innerHTML = filtered.length
     ? filtered.map((b, idx) => `
         <tr>
-          <td style="color:var(--muted);font-size:0.78rem">${filtered.length - idx}</td>
+          <td style="color:var(--muted);font-size:0.78rem">${idx + 1}</td>
           <td><strong>${b.name}</strong></td>
-          <td>${b.phone}</td>
-          <td>
-            <span class="svc-badge">${b.service}</span>
-          </td>
+          <td>${b.phone || '—'}</td>
+          <td><span class="svc-badge">${b.service}</span></td>
           <td>${formatDate(b.date)}</td>
           <td>${b.time}</td>
           <td style="font-weight:600;color:var(--lav-dark)">KSh ${b.price.toLocaleString()}</td>
-          <td><span class="badge ${b.member ? 'badge-member' : 'badge-guest'}">${b.member ? ' Member' : ' Guest'}</span></td>
+          <td><span class="badge ${b.member ? 'badge-member' : 'badge-guest'}">${b.member ? '⭐ Member' : '👤 Guest'}</span></td>
           <td style="color:var(--muted);font-size:0.82rem;max-width:140px">${b.notes || '<em>—</em>'}</td>
         </tr>`).join('')
-    : '<tr><td colspan="9" class="empty-row">No bookings match your filter</td></tr>';
+    : '<tr><td colspan="9" class="empty-row">No bookings yet</td></tr>';
 }
 
 function renderMembersTable() {
   const mTbody = $('adminMembers');
-  mTbody.innerHTML = state.users.length
-    ? state.users.map((u, idx) => {
+  if (!mTbody) return;
+  mTbody.innerHTML = state.members.length
+    ? state.members.map((u, idx) => {
         const userBookings = state.bookings.filter(b => b.email === u.email).length;
         return `
           <tr>
@@ -471,12 +543,11 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-
+// ============================
 // EXPORT CSV
-
+// ============================
 function exportBookings() {
   if (!state.bookings.length) { toast('No bookings to export', 'error'); return; }
-
   const headers = ['Name', 'Phone', 'Service', 'Date', 'Time', 'Price (KSh)', 'Member', 'Notes'];
   const rows    = state.bookings.map(b =>
     [b.name, b.phone, b.service, b.date, b.time, b.price, b.member ? 'Yes' : 'No', b.notes || ''].join(',')
@@ -485,9 +556,7 @@ function exportBookings() {
   const blob = new Blob([csv], { type: 'text/csv' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  a.href     = url;
-  a.download = 'lavender_glow_bookings.csv';
-  a.click();
+  a.href = url; a.download = 'lavender_glow_bookings.csv'; a.click();
   URL.revokeObjectURL(url);
   toast('Bookings exported!', 'success');
 }
@@ -497,71 +566,53 @@ function exportBookings() {
 // ============================
 function clearAllData() {
   if (!confirm('Clear ALL bookings and members? This cannot be undone.')) return;
-  state.bookings = [];
-  state.users    = [];
-  save();
-  renderAdmin();
-  toast('All data cleared', 'error');
+  toast('To clear data, delete records directly in Firebase Console → Firestore', 'error');
 }
 
 // ============================
-// INIT — runs on page load
+// INIT
 // ============================
 (function init() {
+  const bkDate = $('bkDate');
+  if (bkDate) bkDate.min = new Date().toISOString().split('T')[0];
 
-  // Set minimum booking date to today
-  $('bkDate').min = new Date().toISOString().split('T')[0];
+  $('navAuthBtn').addEventListener('click', () => {
+    if (state.currentUser && !isAdmin()) openAccountModal();
+    else if (isAdmin()) $('adminSection').scrollIntoView({ behavior: 'smooth' });
+    else openAuthModal('login');
+  });
 
-  // Nav auth button
-  $('navAuthBtn').addEventListener('click', () => openAuthModal('login'));
-
-  // Hero join button (may not exist on all pages)
   const heroJoinBtn = $('heroJoinBtn');
   if (heroJoinBtn) heroJoinBtn.addEventListener('click', () => openAuthModal('register'));
 
-  // Guest notice join link
   const guestJoinLink = $('guestJoinLink');
   if (guestJoinLink) guestJoinLink.addEventListener('click', (e) => { e.preventDefault(); openAuthModal('register'); });
 
-  // Auth modal tabs
   $('tabSignIn').addEventListener('click',   () => switchAuthTab('login'));
   $('tabRegister').addEventListener('click', () => switchAuthTab('register'));
-
-  // Auth buttons
   $('loginBtn').addEventListener('click',    doLogin);
   $('registerBtn').addEventListener('click', doRegister);
   $('logoutBtn').addEventListener('click',   doLogout);
+  $('authClose').addEventListener('click',   () => closeModal('authOverlay'));
+  $('accClose').addEventListener('click',    () => closeModal('accOverlay'));
 
-  // Modal close buttons
-  $('authClose').addEventListener('click', () => closeModal('authOverlay'));
-  $('accClose').addEventListener('click',  () => closeModal('accOverlay'));
-
-  // Close modals by clicking overlay background
   ['authOverlay', 'accOverlay'].forEach(id => {
     $(id).addEventListener('click', function(e) {
       if (e.target === this) closeModal(id);
     });
   });
 
-  // Booking actions
   $('confirmBookingBtn').addEventListener('click', submitBooking);
   $('clearBookingBtn').addEventListener('click',   clearBookingForm);
+  $('bkService').addEventListener('change',        updatePriceSummary);
 
-  // Price summary on service change
-  $('bkService').addEventListener('change', updatePriceSummary);
-
-  // Admin buttons — use delegation so they work even when dashboard is hidden/shown dynamically
   document.addEventListener('click', e => {
     if (e.target.id === 'exportBtn')    exportBookings();
     if (e.target.id === 'clearDataBtn') clearAllData();
   });
 
-  // Admin live filters
   document.addEventListener('input',  e => { if (e.target.id === 'adminSearch')     renderBookingsTable(); });
   document.addEventListener('change', e => { if (e.target.id === 'adminFilterSvc')  renderBookingsTable(); });
   document.addEventListener('change', e => { if (e.target.id === 'adminFilterType') renderBookingsTable(); });
-
-  // Initial render
-  refreshUI();
 
 })();
