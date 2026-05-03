@@ -35,7 +35,7 @@ const SERVICES = [
   { name: 'Pedicure',         icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/pedicure_tmimzg.jpg',          desc: 'Relaxing foot care and nail grooming',                           price: 1500 },
   { name: 'Wig Installation', icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664970/wig_installation_gkokcs.jpg',  desc: 'Professional wig fitting and styling',                           price: 2500 },
   { name: 'Hair Dressing',    icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/hair_dressing_xb68xg.jpg',     desc: 'Styling, braiding, and coloring to keep you looking your best',  price: 3000 },
-  { name: 'Barber Shop',      icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/cornrows_hwnvtr.jpg',          desc: 'Fresh cuts, Cornrows, Locs installation and braids',             price: 600  },
+  { name: 'Barber Shop',      icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/cornrows_hwnvtr.jpg',          desc: 'Fresh cuts, Cornrows, Locs installation and braids',             price: 400  },
 ];
 
 // ============================
