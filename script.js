@@ -115,7 +115,7 @@ async function doLogin() {
   try {
     await signInWithEmailAndPassword(auth, email, pass);
     closeModal('authOverlay');
-    toast('Welcome back! nigga', 'success');
+    toast('Welcome back! 🌿', 'success');
   } catch (err) {
     toast('Incorrect email or password', 'error');
   }
@@ -136,7 +136,6 @@ async function doRegister() {
     const cred = await createUserWithEmailAndPassword(auth, email, pass);
     await updateProfile(cred.user, { displayName: name });
 
-    // Save member profile to Firestore
     await setDoc(doc(db, 'members', cred.user.uid), {
       name,
       email,
@@ -145,10 +144,12 @@ async function doRegister() {
     });
 
     closeModal('authOverlay');
-    toast('Account created! 5% discount is now active 🎉', 'success');
+    toast('Welcome to Lavender Glow! 💜', 'success');
   } catch (err) {
     if (err.code === 'auth/email-already-in-use') {
-      toast('Email already registered', 'error');
+      toast('This email is already registered — please Sign In instead!', 'error');
+      switchAuthTab('login');
+      $('liEmail').value = email;
     } else {
       toast('Registration failed: ' + err.message, 'error');
     }
@@ -161,7 +162,7 @@ async function doRegister() {
 async function doLogout() {
   await signOut(auth);
   closeModal('accOverlay');
-  toast('Signed out. See you soon! Nigga!!!');
+  toast('Signed out. See you soon! 🌿');
 }
 
 // ============================
@@ -267,14 +268,10 @@ function renderServices() {
   if (!grid) return;
 
   const subtitle = $('svcSubtitle');
-  if (subtitle) subtitle.textContent = isMember()
-    ? 'Member pricing active — 5% off all services!'
-    : 'Register free to unlock member pricing';
+  if (subtitle) subtitle.textContent = 'Choose a service to book an appointment';
 
   grid.innerHTML = SERVICES.map((s, i) => {
-    const discPrice = Math.round(s.price * 0.95);
-    const saving    = s.price - discPrice;
-    const selected  = state.selSvc === i;
+    const selected = state.selSvc === i;
 
     return `
       <div class="service-card${selected ? ' selected' : ''}" onclick="selectService(${i})">
@@ -286,10 +283,6 @@ function renderServices() {
           <div class="svc-name">${s.name}</div>
           <div class="svc-desc-text">${s.desc}</div>
           <div class="svc-price">KSh ${s.price.toLocaleString()}</div>
-          ${isMember()
-            ? `<div class="svc-disc">⭐ Member price: KSh ${discPrice.toLocaleString()}</div>`
-            : `<div class="svc-save">Join to save KSh ${saving.toLocaleString()}</div>`
-          }
           <button class="svc-book-btn" onclick="event.stopPropagation(); selectService(${i})">Book Now</button>
         </div>
       </div>`;
@@ -332,8 +325,8 @@ function updatePriceSummary() {
 
   if (!svc) { ps.style.display = 'none'; return; }
 
-  const disc  = isMember() ? Math.round(svc.price * 0.05) : 0;
-  const total = svc.price - disc;
+  const disc  = 0;
+  const total = svc.price;
 
   ps.style.display = 'block';
   $('psSvc').textContent     = svc.name;
@@ -371,7 +364,7 @@ async function submitBooking() {
     await addDoc(collection(db, 'bookings'), {
       name, phone,
       service: svcName,
-      date, time, notes, price, member,
+      date, time, notes, price: svc.price, member: isMember(),
       email:   state.currentUser ? state.currentUser.email : null,
       uid:     state.currentUser ? state.currentUser.uid   : null,
       created: new Date().toISOString(),
@@ -380,8 +373,12 @@ async function submitBooking() {
     clearBookingForm();
     toast('Appointment booked! See you at Lavender Glow 💜', 'success');
   } catch (err) {
-    toast('Booking failed. Please try again.', 'error');
-    console.error(err);
+    if (err.code === 'permission-denied') {
+      toast('Booking failed — please check Firestore rules in Firebase console', 'error');
+    } else {
+      toast('Booking failed: ' + err.message, 'error');
+    }
+    console.error('Booking error:', err);
   }
 }
 
