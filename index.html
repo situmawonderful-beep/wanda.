@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lavender Glow Beauty Saloon — Lurambi, Kakamega</title>
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav>
+  <a class="logoB" href="#top">
+    
+  </a>
+</nav>
+<nav>
+  <a class="logo" href="#top">
+    <div class="logo-icon">
+     <img src="https://res.cloudinary.com/dbk47jrff/image/upload/v1777664977/lg_logo_rhjea7.png" alt="Lavender Glow Logo" style="width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:center;box-shadow:0 2px 10px rgba(124,92,191,0.25);">
+    </div>
+    <div class="logo-words">
+      <span class="logo-name">Lavender Glow Beauty Space</span>
+      </div>
+    
+      <span class="logo-tagline"><img src="LG%20html_files/locationb.png" style="height: 20px; width: 20px;">Lurambi. Bamboo. Kakamega</span>
+      
+    
+  </a>
+  <ul>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#book">Book</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><button class="nav-cta" id="navAuthBtn">Sign In</button></li>
+  </ul>
+</nav>
+
+<!-- ========== HERO ========== -->
+<section class="hero" id="top">
+  <div class="hero-dots"></div>
+  <div class="hero-content">
+    <div class="hero-badge">✦✦ Premium Beauty &amp; Wellness✦✦</div>
+    <h1><strong>Glow Like You<br><em>Truly Deserve</em></strong></h1>
+    <p class="hero-desc">Where elegance meets care. Your transformation begins here in the heart of Lurambi, Kakamega.</p>
+    <div class="hero-pills">
+       <span class="pill gold-pill">✨ Members Save 5% off on first your service</span>
+      <span class="pill"> 🟢Bamboo, Lurambi, Kakamega</span>
+      <span class="pill"><span class="open-dot"></span>&nbsp;Mon – Sat</span>
+      <span class="pill">🕖 7:00 AM – 10:00 PM</span>
+     
+    </div>
+    <div class="hero-btns">
+      <a href="#book" class="btn btn-gold">Book Appointment</a>
+      <button class="btn btn-outline" id="heroJoinBtn">Join &amp; Save 5%</button>
+    </div>
+  </div>
+</section>
+
+<!-- ========== INFO BAR ========== -->
+<div class="info-bar">
+  <div class="info-item"><span class="open-dot"></span>&nbsp;<strong>Weekdays:</strong>&nbsp;Monday - Friday 7:00 AM – 10:00 PM</div>
+  <div class="info-item"><span class="open-dot"></span>&nbsp;<strong>Weekends:</strong>&nbsp;Saturday &amp; Sunday 10:00AM - 8:00 PM</div>
+  <div class="info-item">🟢 <strong>Bamboo, Lurambi, Kakamega</strong></div>
+  <div class="info-item">📞 <a href="tel:+254 700 000 000">+254 115 506 649</a></div>
+</div>
+
+<!-- ========== MAIN ========== -->
+<div class="container">
+
+  <!-- Member welcome notice -->
+  <div class="notice notice-success" id="memberWelcome" style="display:none">
+    ✨ Welcome back! Your <strong>5% member discount</strong> is active on all services.
+  </div>
+
+  <!-- SERVICES -->
+  <section class="section" id="services">
+    <h2 class="section-title">Our Services</h2>
+    <p class="section-subtitle" id="svcSubtitle">Register today to see our services and unlock your 5% discount on your first service</p>
+    
+  <div class="services-grid" id="servicesGrid">
+      <div class="service-card" onclick="selectService(0)">
+        
+        <div class="svc-icon">
+          <img src="images/manicure b.jpg" alt="manicure" style="height: 190px; width: 210px;">
+        </div>
+        <div class="svc-name">Manicure</div>
+        <div class="svc-price">KSh 500</div>
+        <div class="svc-save">Join to save 5% discount on your first service</div>
+      </div>
+      <div class="service-card" onclick="selectService(1)">
+        
+        <div class="svc-icon">🦶</div>
+        <div class="svc-name">Pedicure</div>
+        <div class="svc-price">KSh 600</div>
+        <div class="svc-save">Join to save 5% discount on your first service</div>
+      </div>
+      <div class="service-card" onclick="selectService(2)">
+        
+        <div class="svc-icon">👸</div>
+        <div class="svc-name">Wig Installation</div>
+        <div class="svc-price">KSh 1,500</div>
+        <div class="svc-save">Join to save 5% discount on your first service</div>
+      </div>
+      <div class="service-card" onclick="selectService(3)">
+        
+        <div class="svc-icon">✂️</div>
+        <div class="svc-name">Hair Dressing</div>
+        <div class="svc-price">KSh 800</div>
+        <div class="svc-save">Join to save 5% discount on your first service</div>
+      </div>
+      <div class="service-card" onclick="selectService(4)">
+        
+        <div class="svc-icon">💈</div>
+        <div class="svc-name">Barber Shop</div>
+        <div class="svc-price">KSh 400</div>
+        <div class="svc-save">Join to save 5% discount on your first service</div>
+      </div></div>
+  <div class="divider"></div>
+  </section>
+
+  <!-- BOOKING -->
+  <section class="section" id="book">
+    <h2 class="section-title">Book an Appointment</h2>
+    <p class="section-subtitle">Fill in your details and we'll confirm your slot</p>
+    <div class="divider"></div>
+
+    <div class="notice notice-success" id="bookMemberNotice" style="display:none">
+      ✅ Your 5% member discount will be automatically applied!
+    </div>
+    <div class="notice notice-info" id="bookGuestNotice" style="display: flex;">
+      💡 <a href="#" id="guestJoinLink">Create a free account</a> to unlock 5% off every service.
+    </div>
+
+    <div class="booking-box">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="bkName" placeholder="e.g. castrol wanda">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="bkPhone" placeholder="+254 7XX XXX XXX">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Service</label>
+          <select id="bkService"><option value="" selected="selected">-- Select a service --</option><option value="Manicure">Manicure  —  KSh 500</option><option value="Pedicure">Pedicure  —  KSh 600</option><option value="Wig Installation">Wig Installation  —  KSh 1,500</option><option value="Hair Dressing">Hair Dressing  —  KSh 800</option><option value="Barber Shop">Barber Shop  —  KSh 400</option></select>
+        </div>
+        <div class="form-group">
+          <label>Preferred Date</label>
+          <input type="date" id="bkDate" min="2026-05-01">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Preferred Time</label>
+          <select id="bkTime">
+            <option value="" selected="selected">-- Select time --</option>
+            <option>7:00 AM</option><option>8:00 AM</option><option>9:00 AM</option>
+            <option>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option>
+            <option>1:00 PM</option><option>2:00 PM</option><option>3:00 PM</option>
+            <option>4:00 PM</option><option>5:00 PM</option><option>6:00 PM</option>
+            <option>7:00 PM</option><option>8:00 PM</option><option>9:00 PM</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Special Notes (optional)</label>
+          <input type="text" id="bkNotes" placeholder="Any special requests...">
+        </div>
+      </div>
+
+      <!-- Price Summary -->
+      <div id="priceSummary" class="price-summary" style="display:none">
+        <div class="ps-row"><span>Service</span><span id="psSvc">—</span></div>
+        <div class="ps-row"><span>Regular Price</span><span id="psRegular">—</span></div>
+        <div class="ps-row ps-discount" id="psDiscRow" style="display:none">
+          <span>Member Discount (5%)</span><span id="psDisc">—</span>
+        </div>
+        <div class="ps-row ps-total"><span>Total</span><span id="psTotal">—</span></div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" id="confirmBookingBtn">Confirm Booking</button>
+        <button class="btn btn-outline-lav" id="clearBookingBtn">Clear Form</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMIN SECTION -->
+  <section class="section" id="adminSection" style="display:none">
+    <h2 class="section-title">Admin Dashboard</h2>
+    <p class="section-subtitle">Manage bookings, members and revenue — Lavender Glow Beauty Space</p>
+    <div class="divider"></div>
+
+    <div class="admin-panel">
+      <div class="admin-header">
+        <div>
+          <h3> Lavender Glow Beauty Space — Control Panel</h3>
+          <span class="admin-role">Administrator Access · <span id="adminDate"></span></span>
+        </div>
+        <div class="admin-header-actions">
+          <button class="btn btn-outline btn-sm" id="exportBtn">⬇ Export CSV</button>
+          <button class="btn btn-danger btn-sm" id="clearDataBtn">🗑 Clear Data</button>
+        </div>
+      </div>
+
+      <div class="admin-body">
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card stat-purple">
+            <div class="stat-icon"></div>
+            <div class="stat-num" id="stTotal">0</div>
+            <div class="stat-label">Total Bookings</div>
+          </div>
+          <div class="stat-card stat-gold">
+            <div class="stat-icon">✨</div>
+            <div class="stat-num" id="stMembers">0</div>
+            <div class="stat-label">Members</div>
+          </div>
+          <div class="stat-card stat-green">
+            <div class="stat-icon"></div>
+            <div class="stat-num" id="stToday">0</div>
+            <div class="stat-label">Today's Bookings</div>
+          </div>
+          <div class="stat-card stat-blue">
+            <div class="stat-icon"></div>
+            <div class="stat-num" id="stRevenue">KSh 0</div>
+            <div class="stat-label">Total cost</div>
+          </div>
+          <div class="stat-card stat-pink">
+            <div class="stat-icon"></div>
+            <div class="stat-num" id="stGuests">0</div>
+            <div class="stat-label">Guest Bookings</div>
+          </div>
+        </div>
+
+        <!-- Most popular service -->
+        <div class="admin-highlight-row">
+          <div class="highlight-card">
+            <span class="hl-label"> Most Booked Service</span>
+            <span class="hl-value" id="stPopular">—</span>
+          </div>
+          <div class="highlight-card">
+            <span class="hl-label"> Next Appointment</span>
+            <span class="hl-value" id="stNext">—</span>
+          </div>
+          <div class="highlight-card">
+            <span class="hl-label"> Member Revenue</span>
+            <span class="hl-value" id="stMemberRev">KSh 0</span>
+          </div>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="admin-filter-bar">
+          <input type="text" id="adminSearch" placeholder=" Search by name, phone or service..." class="admin-search">
+          <select id="adminFilterSvc" class="admin-filter-select">
+            <option value="" selected="selected">All Services</option>
+          </select>
+          <select id="adminFilterType" class="admin-filter-select">
+            <option value="" selected="selected">All Clients</option>
+            <option value="member">Members Only</option>
+            <option value="guest">Guests Only</option>
+          </select>
+        </div>
+
+        <!-- Bookings Table -->
+        <h4 class="table-heading"> All Bookings</h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Client Name</th>
+                <th>Phone</th>
+                <th>Service</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Price</th>
+                <th>Type</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="adminBookings">
+              <tr><td colspan="9" class="empty-row">No bookings yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Members Table -->
+        <h4 class="table-heading">⭐ Registered Members</h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>#</th><th>Name</th><th>Email</th><th>Joined</th><th>Bookings</th><th>Discount</th></tr>
+            </thead>
+            <tbody id="adminMembers">
+              <tr><td colspan="6" class="empty-row">No members registered</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section" id="contact">
+    <h2 class="section-title">Find Us</h2>
+    <p class="section-subtitle">We'd love to see you in person</p>
+    <div class="divider"></div>
+    <div class="contact-grid">
+      <div class="contact-card"><div class="cc-icon">🟢</div><div class="cc-label">Location</div><div class="cc-val">Bamboo, Lurambi<br>Kakamega County, Kenya</div></div>
+      <div class="contact-card"><div class="cc-icon">🕖</div><div class="cc-label">Opening Hours Weekdays</div><div class="cc-val">Monday – Friday<br>7:00 AM – 10:00 PM</div><div class="cc-label">Opening Hours Weekends</div><div class="cc-val">Saturday &amp; Sunday<br>10:00 AM – 8:00 PM </div></div>
+      
+      <div class="contact-card"><div class="cc-icon">📞</div><div class="cc-label">Call / WhatsApp</div><div class="cc-val"><a href="tel:+254700000000">+254 115 506 649 </a></div></div>
+      <div class="contact-card"><div class="cc-icon">⭐</div><div class="cc-label">Member Perk</div><div class="cc-val">Register free &amp; save<br>5% on all services</div></div>
+    </div>
+  </section>
+
+</div><!-- /container -->
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <div class="f-name">Lavender Glow Beauty Space</div>
+  <div>Bamboo, Lurambi, Kakamega County, Kenya</div>
+  <div class="f-links">
+    <a href="tel:+254700000000">📞 +254 115 506 649</a>
+    <span>Mon–Fri: 7AM – 10PM</span>
+    <span> Sat &amp; sun: 10AM- 8PM</span>
+  </div>
+  <div class="f-copy">© 2025 Lavender Glow Beauty Space. All rights reserved.</div>
+</footer>
+
+<!-- ========== WHATSAPP FLOAT ========== -->
+<a href="https://wa.me/254115506649" target="_blank" class="wa-float" title="Chat on WhatsApp">💬</a>
+
+<!-- ========== AUTH MODAL ========== -->
+<div class="modal-overlay" id="authOverlay">
+  <div class="modal">
+    <button class="modal-close" id="authClose">×</button>
+    <h2 id="authTitle">Welcome Back</h2>
+    <p class="modal-sub" id="authSub">Sign in to access your member discount</p>
+    <div class="tabs">
+      <button class="tab-btn active" id="tabSignIn">Sign In</button>
+      <button class="tab-btn" id="tabRegister">Create Account</button>
+    </div>
+    <!-- Login -->
+    <div id="loginPane">
+      <div class="form-group" style="margin-bottom:.9rem">
+        <label>Email Address</label>
+        <input type="email" id="liEmail" placeholder="your@email.com">
+      </div>
+      <div class="form-group" style="margin-bottom:1.3rem">
+        <label>Password</label>
+        <input type="password" id="liPass" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary btn-full" id="loginBtn">Sign In</button>
+      
+    </div>
+    <!-- Register -->
+    <div id="registerPane" style="display:none">
+      <div class="form-group" style="margin-bottom:.9rem">
+        <label>Full Name</label>
+        <input type="text" id="rgName" placeholder="Your full name">
+      </div>
+      <div class="form-group" style="margin-bottom:.9rem">
+        <label>Email Address</label>
+        <input type="email" id="rgEmail" placeholder="your@email.com">
+      </div>
+      <div class="form-group" style="margin-bottom:1.3rem">
+        <label>Password (min 6 characters)</label>
+        <input type="password" id="rgPass" placeholder="••••••••">
+      </div>
+      <button class="btn btn-gold btn-full" id="registerBtn">Create Account Now &amp; Get 5% Discount on your first service</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ACCOUNT MODAL ========== -->
+<div class="modal-overlay" id="accOverlay">
+  <div class="modal">
+    <button class="modal-close" id="accClose">×</button>
+    <h2>My Account</h2>
+    <div class="account-hero">
+      <div class="avatar" id="accAvatar">?</div>
+      <div>
+        <div class="acc-name" id="accName">—</div>
+        <div class="acc-email" id="accEmail">—</div>
+        <div class="acc-disc">⭐ 5% discount active on first service</div>
+      </div>
+    </div>
+    <h4 class="table-heading">My Bookings</h4>
+    <div id="myBookingsList" class="my-bookings-empty">No bookings yet.</div>
+    <button class="btn btn-outline-lav btn-sm" id="logoutBtn">Sign Out</button>
+  </div>
+</div>
+
+<!-- ========== TOAST ========== -->
+<div class="toast" id="toast"></div>
+
+<script type="module" src="script.js"></script>
+
+</body></html>
