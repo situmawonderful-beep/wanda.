@@ -115,7 +115,7 @@ async function doLogin() {
   try {
     await signInWithEmailAndPassword(auth, email, pass);
     closeModal('authOverlay');
-    toast('Welcome back! 🌿', 'success');
+    toast('Welcome back! Nigga', 'success');
   } catch (err) {
     toast('Incorrect email or password', 'error');
   }
@@ -144,7 +144,7 @@ async function doRegister() {
     });
 
     closeModal('authOverlay');
-    toast('Welcome to Lavender Glow! 💜', 'success');
+    toast('🌟Welcome to Lavender Glow Beauty space!🌟 ', 'success');
   } catch (err) {
     if (err.code === 'auth/email-already-in-use') {
       toast('This email is already registered — please Sign In instead!', 'error');
@@ -162,7 +162,7 @@ async function doRegister() {
 async function doLogout() {
   await signOut(auth);
   closeModal('accOverlay');
-  toast('Signed out. See you soon! 🌿');
+  toast('Signed out. See you soon Nigga!!! ');
 }
 
 // ============================
@@ -242,7 +242,7 @@ function updateNav() {
     btn.onclick = () => $('adminSection').scrollIntoView({ behavior: 'smooth' });
   } else if (state.currentUser) {
     const name = state.currentProfile?.name || state.currentUser.displayName || 'Member';
-    btn.textContent = '👤 ' + name.split(' ')[0];
+    btn.textContent = '' + name.split(' ')[0];
     btn.onclick = openAccountModal;
   } else {
     btn.textContent = 'Sign In';
@@ -371,7 +371,7 @@ async function submitBooking() {
     });
 
     clearBookingForm();
-    toast('Appointment booked! See you at Lavender Glow 💜', 'success');
+    toast('🌟Appointment booked! See you at Lavender Glow ', 'success');
   } catch (err) {
     if (err.code === 'permission-denied') {
       toast('Booking failed — please check Firestore rules in Firebase console', 'error');
@@ -509,7 +509,7 @@ function renderBookingsTable() {
           <td>${formatDate(b.date)}</td>
           <td>${b.time}</td>
           <td style="font-weight:600;color:var(--lav-dark)">KSh ${b.price.toLocaleString()}</td>
-          <td><span class="badge ${b.member ? 'badge-member' : 'badge-guest'}">${b.member ? '⭐ Member' : '👤 Guest'}</span></td>
+          <td><span class="badge ${b.member ? 'badge-member' : 'badge-guest'}">${b.member ? ' ✨Member' : ' Guest'}</span></td>
           <td style="color:var(--muted);font-size:0.82rem;max-width:140px">${b.notes || '<em>—</em>'}</td>
         </tr>`).join('')
     : '<tr><td colspan="9" class="empty-row">No bookings yet</td></tr>';
