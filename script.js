@@ -100,7 +100,7 @@ function switchAuthTab(tab) {
   $('authTitle').textContent = tab === 'login' ? 'Welcome Back' : 'Create Account';
   $('authSub').textContent   = tab === 'login'
     ? 'Sign in to access your member discount'
-    : 'Join free and save 5% on every service';
+    : 'Join free and save 5% on your first Appointment';
 }
 
 // ============================
