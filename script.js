@@ -28,6 +28,7 @@ const db   = getFirestore(app);
 // CONSTANTS
 // ============================
 const ADMIN_EMAIL = 'situmawonderful@gmail.com';
+const ADMIN_PASSWORD = 'wanda.2006'
 const ADMIN_NAME  = 'Wanda';
 
 const SERVICES = [
