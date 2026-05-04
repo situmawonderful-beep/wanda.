@@ -490,3 +490,15 @@ html, body { overflow-x: hidden; width: 100%; }
 .pw-wrap input { width: 100%; padding-right: 2.8rem !important; }
 .pw-eye { position: absolute; right: 0.7rem; background: none; border: none; cursor: pointer; font-size: 1rem; opacity: 0.5; transition: opacity 0.2s; padding: 0; }
 .pw-eye:hover { opacity: 1; }.
+
+.map-container{
+   width:100%;
+   height:250px;
+   overflow:hidden;
+   margin:20px 0;
+   box-shadow: o 4px 12px rgba(0,0,0,0.1);
+}
+.map-container iframe{
+   width:100%;
+   height: 100%;
+   border: 0;
