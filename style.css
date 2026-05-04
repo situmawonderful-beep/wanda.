@@ -99,7 +99,10 @@ nav ul li a:hover { color: var(--gold); }
   background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
   background-size: 32px 32px;
 }
-.hero-content { position: relative; max-width: 700px; margin: 0 auto; }
+.hero-content {
+   position: relative; max-width: 700px; margin: 0 auto;
+   color:var(--black);
+}
 .hero-badge {
   display: inline-block;
   background:ghostwhite; padding: 0.3rem 1rem; border-radius: 25px;
