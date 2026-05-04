@@ -7,8 +7,8 @@
 // FIREBASE CONFIG
 // ============================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot, doc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBbbXQVgW5WQsbtnN2SmwtOqP4cd13VfRI",
@@ -31,11 +31,11 @@ const ADMIN_EMAIL = 'situmawonderful@gmail.com';
 const ADMIN_NAME  = 'Wanda';
 
 const SERVICES = [
-  { name: 'Manicure',         icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/manicure_b_hrhetr.jpg',        desc: 'We offer: Classic, Gel & acrylic nail treatments',                        price: 3000 },
-  { name: 'Pedicure',         icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/pedicure_tmimzg.jpg',          desc: 'We offer: Relaxing foot care and nail grooming',                           price: 3500 },
-  { name: 'Wig Installation', icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664970/wig_installation_gkokcs.jpg',  desc: 'we offer: Professional wig fitting and styling',                           price: 3500 },
-  { name: 'Hair Dressing',    icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/hair_dressing_xb68xg.jpg',     desc: 'We offer: Styling, braiding, and coloring to keep you looking your best',  price: 2000 },
-  { name: 'Barber Shop',      icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/cornrows_hwnvtr.jpg',          desc: 'We offer: Fresh cuts, Cornrows installation, Locs installation and braids',  price: 400  },
+  { name: 'Manicure',         icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/manicure_b_hrhetr.jpg',        desc: 'Classic, Gel & acrylic nail treatments',                        price: 1500 },
+  { name: 'Pedicure',         icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/pedicure_tmimzg.jpg',          desc: 'Relaxing foot care and nail grooming',                           price: 1500 },
+  { name: 'Wig Installation', icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664970/wig_installation_gkokcs.jpg',  desc: 'Professional wig fitting and styling',                           price: 2500 },
+  { name: 'Hair Dressing',    icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/hair_dressing_xb68xg.jpg',     desc: 'Styling, braiding, and coloring to keep you looking your best',  price: 3000 },
+  { name: 'Barber Shop',      icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/cornrows_hwnvtr.jpg',          desc: 'Fresh cuts, Cornrows, Locs installation and braids',             price: 600  },
 ];
 
 // ============================
@@ -68,8 +68,38 @@ function isAdmin() {
 }
 
 // ============================
-// TOAST
+// PASSWORD TOGGLE
 // ============================
+function togglePw(inputId, btn) {
+  const input = $(inputId);
+  if (!input) return;
+  const isText = input.type === 'text';
+  input.type = isText ? 'password' : 'text';
+  btn.textContent = isText ? '👁' : '🙈';
+  btn.classList.toggle('active', !isText);
+}
+
+// ============================
+// FORGOT PASSWORD
+// ============================
+async function forgotPassword() {
+  const email = $('liEmail').value.trim();
+  if (!email) {
+    toast('Please enter your email address first', 'error');
+    $('liEmail').focus();
+    return;
+  }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    toast('Reset email sent! Check your inbox 📧', 'success');
+  } catch (err) {
+    if (err.code === 'auth/user-not-found') {
+      toast('No account found with that email', 'error');
+    } else {
+      toast('Failed to send reset email', 'error');
+    }
+  }
+}
 let toastTimer;
 function toast(msg, type = '') {
   const el = $('toast');
@@ -100,7 +130,7 @@ function switchAuthTab(tab) {
   $('authTitle').textContent = tab === 'login' ? 'Welcome Back' : 'Create Account';
   $('authSub').textContent   = tab === 'login'
     ? 'Sign in to access your member discount'
-    : 'Join free and save 5% on your first Appointment';
+    : 'Join free and save 5% on every service';
 }
 
 // ============================
@@ -115,7 +145,7 @@ async function doLogin() {
   try {
     await signInWithEmailAndPassword(auth, email, pass);
     closeModal('authOverlay');
-    toast('Welcome back! Nigga', 'success');
+    toast('Welcome back! 🌿', 'success');
   } catch (err) {
     toast('Incorrect email or password', 'error');
   }
@@ -144,7 +174,7 @@ async function doRegister() {
     });
 
     closeModal('authOverlay');
-    toast('🌟Welcome to Lavender Glow Beauty space!🌟 ', 'success');
+    toast('Welcome to Lavender Glow! 💜', 'success');
   } catch (err) {
     if (err.code === 'auth/email-already-in-use') {
       toast('This email is already registered — please Sign In instead!', 'error');
@@ -162,7 +192,7 @@ async function doRegister() {
 async function doLogout() {
   await signOut(auth);
   closeModal('accOverlay');
-  toast('Signed out. See you soon Nigga!!! ');
+  toast('Signed out. See you soon! 🌿');
 }
 
 // ============================
@@ -242,7 +272,7 @@ function updateNav() {
     btn.onclick = () => $('adminSection').scrollIntoView({ behavior: 'smooth' });
   } else if (state.currentUser) {
     const name = state.currentProfile?.name || state.currentUser.displayName || 'Member';
-    btn.textContent = '' + name.split(' ')[0];
+    btn.textContent = '👤 ' + name.split(' ')[0];
     btn.onclick = openAccountModal;
   } else {
     btn.textContent = 'Sign In';
@@ -371,7 +401,7 @@ async function submitBooking() {
     });
 
     clearBookingForm();
-    toast('🌟Appointment booked! See you at Lavender Glow ', 'success');
+    toast('Appointment booked! See you at Lavender Glow 💜', 'success');
   } catch (err) {
     if (err.code === 'permission-denied') {
       toast('Booking failed — please check Firestore rules in Firebase console', 'error');
@@ -509,7 +539,7 @@ function renderBookingsTable() {
           <td>${formatDate(b.date)}</td>
           <td>${b.time}</td>
           <td style="font-weight:600;color:var(--lav-dark)">KSh ${b.price.toLocaleString()}</td>
-          <td><span class="badge ${b.member ? 'badge-member' : 'badge-guest'}">${b.member ? ' ✨Member' : ' Guest'}</span></td>
+          <td><span class="badge ${b.member ? 'badge-member' : 'badge-guest'}">${b.member ? '⭐ Member' : '👤 Guest'}</span></td>
           <td style="color:var(--muted);font-size:0.82rem;max-width:140px">${b.notes || '<em>—</em>'}</td>
         </tr>`).join('')
     : '<tr><td colspan="9" class="empty-row">No bookings yet</td></tr>';
@@ -561,9 +591,19 @@ function exportBookings() {
 // ============================
 // CLEAR ALL DATA
 // ============================
-function clearAllData() {
-  if (!confirm('Clear ALL bookings and members? This cannot be undone.')) return;
-  toast('To clear data, delete records directly in Firebase Console → Firestore', 'error');
+async function clearAllData() {
+  if (!confirm('Delete ALL bookings? This cannot be undone.')) return;
+
+  try {
+    const snapshot = await getDocs(collection(db, 'bookings'));
+    const deletes  = snapshot.docs.map(d => deleteDoc(doc(db, 'bookings', d.id)));
+    await Promise.all(deletes);
+    toast('All bookings deleted! ✅', 'success');
+    renderAdmin();
+  } catch (err) {
+    toast('Failed to delete: ' + err.message, 'error');
+    console.error(err);
+  }
 }
 
 // ============================
@@ -584,6 +624,9 @@ function clearAllData() {
 
   const guestJoinLink = $('guestJoinLink');
   if (guestJoinLink) guestJoinLink.addEventListener('click', (e) => { e.preventDefault(); openAuthModal('register'); });
+
+  const forgotPassLink = $('forgotPassLink');
+  if (forgotPassLink) forgotPassLink.addEventListener('click', (e) => { e.preventDefault(); forgotPassword(); });
 
   $('tabSignIn').addEventListener('click',   () => switchAuthTab('login'));
   $('tabRegister').addEventListener('click', () => switchAuthTab('register'));
@@ -612,4 +655,4 @@ function clearAllData() {
   document.addEventListener('change', e => { if (e.target.id === 'adminFilterSvc')  renderBookingsTable(); });
   document.addEventListener('change', e => { if (e.target.id === 'adminFilterType') renderBookingsTable(); });
 
-})();
+})();.
