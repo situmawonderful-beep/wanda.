@@ -655,4 +655,4 @@ async function clearAllData() {
   document.addEventListener('change', e => { if (e.target.id === 'adminFilterSvc')  renderBookingsTable(); });
   document.addEventListener('change', e => { if (e.target.id === 'adminFilterType') renderBookingsTable(); });
 
-})();.
+})();
