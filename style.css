@@ -44,6 +44,10 @@ a:hover { text-decoration: underline; }
 ::-webkit-scrollbar-track { background: var(--cream); }
 ::-webkit-scrollbar-thumb { background: var(--lav-mid); border-radius: 3px; }
 
+.title{
+   color:var(--dark-gold);
+   background-color:white;
+}
 /* NAV */
 nav {
   background: var(--lav-deep);
