@@ -46,7 +46,7 @@ a:hover { text-decoration: underline; }
 
 .title{
    color:var(--dark-gold);
-   background-color:white;
+   background-color:var(-dark-lavevder);
 }
 /* NAV */
 nav {
