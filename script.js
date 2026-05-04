@@ -75,7 +75,7 @@ function togglePw(inputId, btn) {
   if (!input) return;
   const isText = input.type === 'text';
   input.type = isText ? 'password' : 'text';
-  btn.textContent = isText ? '👁️' : '🙈';
+  btn.textContent = isText ? '👁' : '🙈';
   btn.classList.toggle('active', !isText);
 }
 
@@ -130,7 +130,7 @@ function switchAuthTab(tab) {
   $('authTitle').textContent = tab === 'login' ? 'Welcome Back' : 'Create Account';
   $('authSub').textContent   = tab === 'login'
     ? 'Sign in to access your member discount'
-    : 'Join free and save 5% on every service';
+    : 'Join free and save 5% on your first Appointment';
 }
 
 // ============================
@@ -174,7 +174,7 @@ async function doRegister() {
     });
 
     closeModal('authOverlay');
-    toast('Welcome to Lavender Glow Beauty Space! ', 'success');
+    toast('Welcome to Lavender Glow Beauty Space!! ', 'success');
   } catch (err) {
     if (err.code === 'auth/email-already-in-use') {
       toast('This email is already registered — please Sign In instead!', 'error');
@@ -192,7 +192,7 @@ async function doRegister() {
 async function doLogout() {
   await signOut(auth);
   closeModal('accOverlay');
-  toast('Signed out. See you soon Nigga! ');
+  toast('Signed out. See you soon! Nigga');
 }
 
 // ============================
@@ -592,13 +592,39 @@ function exportBookings() {
 // CLEAR ALL DATA
 // ============================
 async function clearAllData() {
-  if (!confirm('Delete ALL bookings? This cannot be undone.')) return;
+  const choice = prompt(
+    'What do you want to clear?\n\n' +
+    'Type  1  — Clear all Bookings\n' +
+    'Type  2  — Clear all Members\n' +
+    'Type  3  — Clear Both\n\n' +
+    'Press Cancel to go back'
+  );
+
+  if (!choice) return;
+
+  const deleteCollection = async (name) => {
+    const snapshot = await getDocs(collection(db, name));
+    await Promise.all(snapshot.docs.map(d => deleteDoc(doc(db, name, d.id))));
+  };
 
   try {
-    const snapshot = await getDocs(collection(db, 'bookings'));
-    const deletes  = snapshot.docs.map(d => deleteDoc(doc(db, 'bookings', d.id)));
-    await Promise.all(deletes);
-    toast('All bookings deleted! ✅', 'success');
+    if (choice === '1') {
+      if (!confirm('Delete ALL bookings? This cannot be undone.')) return;
+      await deleteCollection('bookings');
+      toast('All bookings deleted! ✅', 'success');
+    } else if (choice === '2') {
+      if (!confirm('Delete ALL members? This cannot be undone.')) return;
+      await deleteCollection('members');
+      toast('All members deleted! ✅', 'success');
+    } else if (choice === '3') {
+      if (!confirm('Delete ALL bookings and members? This cannot be undone.')) return;
+      await deleteCollection('bookings');
+      await deleteCollection('members');
+      toast('All data cleared! ✅', 'success');
+    } else {
+      toast('Invalid choice', 'error');
+      return;
+    }
     renderAdmin();
   } catch (err) {
     toast('Failed to delete: ' + err.message, 'error');
