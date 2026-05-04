@@ -101,7 +101,7 @@ nav ul li a:hover { color: var(--gold); }
 }
 .hero-content {
    position: relative; max-width: 700px; margin: 0 auto;
-   color:var(--black);
+   color:var(--gold);
 }
 .hero-badge {
   display: inline-block;
