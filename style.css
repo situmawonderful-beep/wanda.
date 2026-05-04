@@ -100,7 +100,7 @@ nav ul li a:hover { color: var(--gold); }
   background-size: 32px 32px;
 }
 .hero-content {
-   position: relative; max-width: 700px; margin: 0 auto;  color:var(--gold);
+   position: relative; max-width: 100px; margin: 0 auto;  color:var(--gold);
 }
 .hero-badge {
   display: inline-block;
