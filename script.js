@@ -31,11 +31,11 @@ const ADMIN_EMAIL = 'situmawonderful@gmail.com';
 const ADMIN_NAME  = 'Wanda';
 
 const SERVICES = [
-  { name: 'Manicure',         icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/manicure_b_hrhetr.jpg',        desc: 'We offer: Classic, Gel & acrylic nail treatments',                        price: 500-3000 },
-  { name: 'Pedicure',         icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/pedicure_tmimzg.jpg',          desc: 'We offer: Relaxing foot care and nail grooming',                           price: 500-3500 },
-  { name: 'Wig Installation', icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664970/wig_installation_gkokcs.jpg',  desc: 'we offer: Professional wig fitting and styling',                           price: 2000-3500 },
-  { name: 'Hair Dressing',    icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/hair_dressing_xb68xg.jpg',     desc: 'We offer: Styling, braiding, and coloring to keep you looking your best',  price: 600-2000 },
-  { name: 'Barber Shop',      icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/cornrows_hwnvtr.jpg',          desc: 'We offer: Fresh cuts, Cornrows installation, Locs installation and braids',  price: 400-3000  },
+  { name: 'Manicure',         icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/manicure_b_hrhetr.jpg',        desc: 'We offer: Classic, Gel & acrylic nail treatments',                        price: 3000 },
+  { name: 'Pedicure',         icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/pedicure_tmimzg.jpg',          desc: 'We offer: Relaxing foot care and nail grooming',                           price: 3500 },
+  { name: 'Wig Installation', icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664970/wig_installation_gkokcs.jpg',  desc: 'we offer: Professional wig fitting and styling',                           price: 3500 },
+  { name: 'Hair Dressing',    icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/hair_dressing_xb68xg.jpg',     desc: 'We offer: Styling, braiding, and coloring to keep you looking your best',  price: 2000 },
+  { name: 'Barber Shop',      icon: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1777664969/cornrows_hwnvtr.jpg',          desc: 'We offer: Fresh cuts, Cornrows installation, Locs installation and braids',  price: 400  },
 ];
 
 // ============================
