@@ -70,7 +70,7 @@ nav {
 .logo-words {  
   
 }
-.logo-name { font-family: 'Playfair Display', serif; color: var(--black); font-size: 50px; font-weight: 700; line-height: 0.8; }
+.logo-name { font-family: 'Playfair Display', serif; color: var(--black); font-size: 60px; font-weight: 800; line-height: 0.9; }
 .logo-tagline { font-size: 0.62rem; color: rgba(255,255,255,0.55); letter-spacing: 0.14em; text-transform: uppercase; }
 nav ul { list-style: none; display: flex; align-items: center; gap: 1.8rem; }
 nav ul li a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.87rem; transition: color 0.2s; }
