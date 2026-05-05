@@ -503,10 +503,11 @@ html, body { overflow-x: hidden; width: 100%; }
 .pw-eye:hover { opacity: 1; }.
 
 .map-container{
+   max-width:600px;
    width:100%;
    height:250px;
    overflow:hidden;
-   margin:20px 0;
+   margin:auto;
    box-shadow: o 4px 12px rgba(0,0,0,0.1);
 }
 .map-container iframe{
