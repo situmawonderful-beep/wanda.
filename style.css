@@ -64,9 +64,9 @@ nav {
   margin-left: 0;
 
 }
-.logo-words {  
+ 
   
-}
+
 .logo-name { font-family: 'Playfair Display', serif; color: var(--black); font-size: 50px; font-weight: 700; line-height: 0.8; }
 .logo-tagline { font-size: 0.62rem; color: rgba(255,255,255,0.55); letter-spacing: 0.14em; text-transform: uppercase; }
 nav ul { list-style: none; display: flex; align-items: center; gap: 1.8rem; }
