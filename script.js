@@ -75,7 +75,7 @@ function togglePw(inputId, btn) {
   if (!input) return;
   const isText = input.type === 'text';
   input.type = isText ? 'password' : 'text';
-  btn.textContent = isText ? '👁' : '🙈';
+  btn.textContent = isText ? 'Show' : 'Hide';
   btn.classList.toggle('active', !isText);
 }
 
@@ -91,7 +91,7 @@ async function forgotPassword() {
   }
   try {
     await sendPasswordResetEmail(auth, email);
-    toast('Reset email sent! Check your inbox ', 'success');
+    toast('Reset email sent! Check your inbox.', 'success');
   } catch (err) {
     if (err.code === 'auth/user-not-found') {
       toast('No account found with that email', 'error');
@@ -130,7 +130,7 @@ function switchAuthTab(tab) {
   $('authTitle').textContent = tab === 'login' ? 'Welcome Back' : 'Create Account';
   $('authSub').textContent   = tab === 'login'
     ? 'Sign in to access your member discount'
-    : 'Join free and save 5% on your first Appointment';
+    : 'Join free and save 5% on every service';
 }
 
 // ============================
@@ -145,7 +145,7 @@ async function doLogin() {
   try {
     await signInWithEmailAndPassword(auth, email, pass);
     closeModal('authOverlay');
-    toast('Welcome back! ', 'success');
+    toast('Welcome back!', 'success');
   } catch (err) {
     toast('Incorrect email or password', 'error');
   }
@@ -174,7 +174,7 @@ async function doRegister() {
     });
 
     closeModal('authOverlay');
-    toast('Welcome to Lavender Glow Beauty Space!! ', 'success');
+    toast('Welcome to Lavender Glow!', 'success');
   } catch (err) {
     if (err.code === 'auth/email-already-in-use') {
       toast('This email is already registered — please Sign In instead!', 'error');
@@ -192,7 +192,7 @@ async function doRegister() {
 async function doLogout() {
   await signOut(auth);
   closeModal('accOverlay');
-  toast('Signed out. See you soon! Nigga');
+  toast('Signed out. See you soon!');
 }
 
 // ============================
@@ -268,11 +268,11 @@ function updateNav() {
   if (!btn) return;
 
   if (isAdmin()) {
-    btn.textContent = '⚙ Admin';
+    btn.textContent = 'Admin';
     btn.onclick = () => $('adminSection').scrollIntoView({ behavior: 'smooth' });
   } else if (state.currentUser) {
     const name = state.currentProfile?.name || state.currentUser.displayName || 'Member';
-    btn.textContent = ' ' + name.split(' ')[0];
+    btn.textContent = name.split(' ')[0];
     btn.onclick = openAccountModal;
   } else {
     btn.textContent = 'Sign In';
@@ -401,7 +401,7 @@ async function submitBooking() {
     });
 
     clearBookingForm();
-    toast('Appointment booked! See you at Lavender Glow Beauty Space', 'success');
+    toast('Appointment booked! See you at Lavender Glow.', 'success');
   } catch (err) {
     if (err.code === 'permission-denied') {
       toast('Booking failed — please check Firestore rules in Firebase console', 'error');
@@ -531,7 +531,7 @@ function renderBookingsTable() {
 
   bTbody.innerHTML = filtered.length
     ? filtered.map((b, idx) => `
-        <tr>
+        <tr class="${b.completed ? 'row-completed' : ''}">
           <td style="color:var(--muted);font-size:0.78rem">${idx + 1}</td>
           <td><strong>${b.name}</strong></td>
           <td>${b.phone || '—'}</td>
@@ -539,10 +539,17 @@ function renderBookingsTable() {
           <td>${formatDate(b.date)}</td>
           <td>${b.time}</td>
           <td style="font-weight:600;color:var(--lav-dark)">KSh ${b.price.toLocaleString()}</td>
-          <td><span class="badge ${b.member ? 'badge-member' : 'badge-guest'}">${b.member ? ' Member' : ' Guest'}</span></td>
-          <td style="color:var(--muted);font-size:0.82rem;max-width:140px">${b.notes || '<em>—</em>'}</td>
+          <td><span class="badge ${b.member ? 'badge-member' : 'badge-guest'}">${b.member ? 'Member' : 'Guest'}</span></td>
+          <td style="color:var(--muted);font-size:0.82rem;max-width:120px">${b.notes || '<em>—</em>'}</td>
+          <td>
+            <button 
+              class="btn-complete ${b.completed ? 'btn-completed' : ''}" 
+              onclick="toggleComplete('${b.id}', ${!!b.completed})">
+              ${b.completed ? 'Done' : 'Pending'}
+            </button>
+          </td>
         </tr>`).join('')
-    : '<tr><td colspan="9" class="empty-row">No bookings yet</td></tr>';
+    : '<tr><td colspan="10" class="empty-row">No bookings yet</td></tr>';
 }
 
 function renderMembersTable() {
@@ -589,8 +596,17 @@ function exportBookings() {
 }
 
 // ============================
-// CLEAR ALL DATA
+// TOGGLE BOOKING COMPLETE
 // ============================
+async function toggleComplete(bookingId, current) {
+  try {
+    await setDoc(doc(db, 'bookings', bookingId), { completed: !current }, { merge: true });
+    toast(!current ? 'Marked as completed.' : 'Marked as pending.', 'success');
+  } catch (err) {
+    toast('Failed to update status', 'error');
+    console.error(err);
+  }
+}
 async function clearAllData() {
   const choice = prompt(
     'What do you want to clear?\n\n' +
@@ -611,16 +627,16 @@ async function clearAllData() {
     if (choice === '1') {
       if (!confirm('Delete ALL bookings? This cannot be undone.')) return;
       await deleteCollection('bookings');
-      toast('All bookings deleted! ✅', 'success');
+      toast('All bookings deleted.', 'success');
     } else if (choice === '2') {
       if (!confirm('Delete ALL members? This cannot be undone.')) return;
       await deleteCollection('members');
-      toast('All members deleted! ✅', 'success');
+      toast('All members deleted.', 'success');
     } else if (choice === '3') {
       if (!confirm('Delete ALL bookings and members? This cannot be undone.')) return;
       await deleteCollection('bookings');
       await deleteCollection('members');
-      toast('All data cleared! ✅', 'success');
+      toast('All data cleared.', 'success');
     } else {
       toast('Invalid choice', 'error');
       return;
