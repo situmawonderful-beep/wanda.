@@ -1,6 +1,3 @@
-   
-
-
 *, *::before, *::after {
   margin: 0;
   padding: 0;
@@ -44,10 +41,6 @@ a:hover { text-decoration: underline; }
 ::-webkit-scrollbar-track { background: var(--cream); }
 ::-webkit-scrollbar-thumb { background: var(--lav-mid); border-radius: 3px; }
 
-.title{
-   color:var(--gold);
-   background-color:var(-dark-lavevder);
-}
 /* NAV */
 nav {
   background: var(--lav-deep);
@@ -74,7 +67,7 @@ nav {
 .logo-words {  
   
 }
-.logo-name { font-family: 'Playfair Display', serif; color: var(--black); font-size: 60px; font-weight: 800; line-height: 0.9; }
+.logo-name { font-family: 'Playfair Display', serif; color: var(--black); font-size: 50px; font-weight: 700; line-height: 0.8; }
 .logo-tagline { font-size: 0.62rem; color: rgba(255,255,255,0.55); letter-spacing: 0.14em; text-transform: uppercase; }
 nav ul { list-style: none; display: flex; align-items: center; gap: 1.8rem; }
 nav ul li a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.87rem; transition: color 0.2s; }
@@ -103,15 +96,12 @@ nav ul li a:hover { color: var(--gold); }
   background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
   background-size: 32px 32px;
 }
-.hero-content {
-   position: relative; max-width: 700px; margin: 0 auto;  color:var(--gold);
-}
+.hero-content { position: relative; max-width: 700px; margin: 0 auto; }
 .hero-badge {
   display: inline-block;
   background:ghostwhite; padding: 0.3rem 1rem; border-radius: 25px;
   font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
   margin-bottom: 1.2rem; font-weight: 500;
-  color:var(--gold);
 }
 .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem,5vw,3.5rem); color: var(--white); line-height: 1.18; margin-bottom: 1rem; }
 .hero h1 em { color: var(--gold); font-style: italic; }
@@ -278,17 +268,6 @@ tr:hover td { background: #faf7fe; }
 .cc-label { font-weight: 500; margin-bottom: 0.3rem; font-size: 0.95rem; }
 .cc-val   { color: var(--muted); font-size: 0.88rem; line-height: 1.6; }
 .cc-val a { color: var(--lav); }
-.contact2{
-   display:flex;
-   flex-direction:column;
-   gap:15px;
-}
-.contact2 iframe{
-   weight:100%;
-   height:100%;
-   border:0;
-   border-radius:12px;
-}
 
 /* FOOTER */
 footer { background: var(--lav-deep); color: rgba(255,255,255,0.65); text-align: center; padding: 2.5rem 1.5rem; font-size: 0.85rem; }
@@ -496,21 +475,153 @@ html, body { overflow-x: hidden; width: 100%; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
   .container { padding: 1.5rem 0.8rem; }
   .section-title { font-size: 1.4rem; }
-}.
-.pw-wrap { position: relative; display: flex; align-items: center; }
-.pw-wrap input { width: 100%; padding-right: 2.8rem !important; }
-.pw-eye { position: absolute; right: 0.7rem; background: none; border: none; cursor: pointer; font-size: 1rem; opacity: 0.5; transition: opacity 0.2s; padding: 0; }
-.pw-eye:hover { opacity: 1; }.
-
-.map-container{
-   max-width:600px;
-   width:100%;
-   height:250px;
-   overflow:hidden;
-   margin:auto;
-   box-shadow: o 4px 12px rgba(0,0,0,0.1);
 }
-.map-container iframe{
-   width:100%;
-   height: 100%;
-   border: 0;
+
+/* ============================
+   PASSWORD EYE TOGGLE
+   ============================ */
+.pw-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.pw-wrap input {
+  width: 100%;
+  padding-right: 2.8rem !important;
+}
+.pw-eye {
+  position: absolute;
+  right: 0.7rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+.pw-eye:hover { opacity: 1; }
+.pw-eye.active { opacity: 1; }
+
+/* ============================
+   BOOKING STATUS — Complete
+   ============================ */
+.btn-complete {
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  font-family: 'Jost', sans-serif;
+  white-space: nowrap;
+  transition: all 0.2s;
+  color: var(--muted);
+}
+.btn-complete:hover { border-color: var(--success); color: var(--success); }
+.btn-completed {
+  background: #e8f5e9;
+  border-color: var(--success);
+  color: var(--success);
+  font-weight: 500;
+}
+.row-completed td {
+  opacity: 0.6;
+  text-decoration: line-through;
+  text-decoration-color: var(--muted);
+}
+.row-completed .btn-completed {
+  text-decoration: none;
+  opacity: 1;
+}
+
+/* ============================
+   CONTACT — 2 Column + Map
+   ============================ */
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 2rem;
+  align-items: start;
+}
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.contact-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.contact-card:hover {
+  border-color: var(--lav);
+  box-shadow: 0 4px 14px rgba(124,92,191,0.1);
+}
+.contact-card .cc-icon {
+  font-size: 1.4rem;
+  min-width: 2rem;
+  text-align: center;
+  margin-top: 0.1rem;
+}
+.cc-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+.cc-val {
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+.contact-map {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 28px rgba(46,31,94,0.12);
+  border: 1.5px solid var(--border);
+}
+.map-wrap {
+  width: 100%;
+  height: 420px;
+}
+.map-wrap iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.map-footer {
+  background: var(--lav-deep);
+  color: var(--white);
+  padding: 0.8rem 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+.map-directions {
+  color: var(--gold);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.82rem;
+  transition: opacity 0.2s;
+}
+.map-directions:hover { opacity: 0.8; }
+
+@media (max-width: 768px) {
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+  .map-wrap { height: 280px; }
+}
