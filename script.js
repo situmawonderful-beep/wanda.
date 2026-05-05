@@ -129,8 +129,8 @@ function switchAuthTab(tab) {
   $('tabRegister').className = 'tab-btn' + (tab === 'register' ? ' active' : '');
   $('authTitle').textContent = tab === 'login' ? 'Welcome Back' : 'Create Account';
   $('authSub').textContent   = tab === 'login'
-    ? 'Sign in to access your member discount'
-    : 'Join free and save 5% on every service';
+    ? 'Sign in todayt'
+    : 'Join for free and enjoy our services';
 }
 
 // ============================
