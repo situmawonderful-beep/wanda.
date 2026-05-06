@@ -667,17 +667,21 @@ async function clearAllData() {
 }
 
 // ============================
+// EXPOSE TO GLOBAL SCOPE
+// (required for ES modules)
+// ============================
+window.togglePw        = togglePw;
+window.selectService   = selectService;
+window.toggleComplete  = toggleComplete;
+window.forgotPassword  = forgotPassword;
+window.markAllComplete = markAllComplete;
+window.switchAuthTab   = switchAuthTab;
+window.openAuthModal   = openAuthModal;
+
+// ============================
 // INIT
 // ============================
 (function init() {
-  // Expose functions to global scope (required for ES modules + HTML onclick)
-  window.togglePw        = togglePw;
-  window.selectService   = selectService;
-  window.toggleComplete  = toggleComplete;
-  window.forgotPassword  = forgotPassword;
-  window.markAllComplete = markAllComplete;
-  window.switchAuthTab   = switchAuthTab;
-  window.openAuthModal   = openAuthModal;
 
   const bkDate = $('bkDate');
   if (bkDate) bkDate.min = new Date().toISOString().split('T')[0];
