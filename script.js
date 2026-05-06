@@ -129,7 +129,7 @@ function switchAuthTab(tab) {
   $('tabRegister').className = 'tab-btn' + (tab === 'register' ? ' active' : '');
   $('authTitle').textContent = tab === 'login' ? 'Welcome Back' : 'Create Account';
   $('authSub').textContent   = tab === 'login'
-    ? 'Sign in todayt'
+    ? 'Sign in today'
     : 'Join for free and enjoy our services';
 }
 
@@ -596,6 +596,24 @@ function exportBookings() {
 }
 
 // ============================
+// MARK ALL COMPLETE
+// ============================
+async function markAllComplete() {
+  const pending = state.bookings.filter(b => !b.completed);
+  if (!pending.length) { toast('All bookings are already marked complete.', 'success'); return; }
+  if (!confirm(`Mark all ${pending.length} pending bookings as complete?`)) return;
+
+  try {
+    await Promise.all(pending.map(b =>
+      setDoc(doc(db, 'bookings', b.id), { completed: true }, { merge: true })
+    ));
+    toast('All bookings marked as complete.', 'success');
+  } catch (err) {
+    toast('Failed to update: ' + err.message, 'error');
+  }
+}
+
+// ============================
 // TOGGLE BOOKING COMPLETE
 // ============================
 async function toggleComplete(bookingId, current) {
@@ -652,6 +670,13 @@ async function clearAllData() {
 // INIT
 // ============================
 (function init() {
+  // Expose functions to global scope (required for ES modules + HTML onclick)
+  window.togglePw        = togglePw;
+  window.selectService   = selectService;
+  window.toggleComplete  = toggleComplete;
+  window.forgotPassword  = forgotPassword;
+  window.markAllComplete = markAllComplete;
+
   const bkDate = $('bkDate');
   if (bkDate) bkDate.min = new Date().toISOString().split('T')[0];
 
@@ -689,8 +714,9 @@ async function clearAllData() {
   $('bkService').addEventListener('change',        updatePriceSummary);
 
   document.addEventListener('click', e => {
-    if (e.target.id === 'exportBtn')    exportBookings();
-    if (e.target.id === 'clearDataBtn') clearAllData();
+    if (e.target.id === 'exportBtn')          exportBookings();
+    if (e.target.id === 'clearDataBtn')       clearAllData();
+    if (e.target.id === 'markAllCompleteBtn') markAllComplete();
   });
 
   document.addEventListener('input',  e => { if (e.target.id === 'adminSearch')     renderBookingsTable(); });
