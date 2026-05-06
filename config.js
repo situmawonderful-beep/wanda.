@@ -109,6 +109,7 @@ const CONFIG = {
       price: 3500,
       image: 'https://res.cloudinary.com/dbk47jrff/image/upload/v1778066202/massage_yut61e.jpg',  
     }
+    
   ],
 
 };
