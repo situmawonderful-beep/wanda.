@@ -676,6 +676,8 @@ async function clearAllData() {
   window.toggleComplete  = toggleComplete;
   window.forgotPassword  = forgotPassword;
   window.markAllComplete = markAllComplete;
+  window.switchAuthTab   = switchAuthTab;
+  window.openAuthModal   = openAuthModal;
 
   const bkDate = $('bkDate');
   if (bkDate) bkDate.min = new Date().toISOString().split('T')[0];
